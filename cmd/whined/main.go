@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"internal/runtime/sys"
 	"log"
 	"net"
 	"os"
