@@ -14,5 +14,5 @@ func main() {
 	defer e.Stop()
 
 	log.Println("whined: playing white noise until interrupted...")
-	select {} // block forevertime.Sleep(3 * time.Second)
+	select {}
 }
