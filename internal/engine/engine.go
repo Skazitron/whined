@@ -19,18 +19,24 @@ const (
 )
 
 type Params struct {
-	Volume   float64
-	CutoffHz float64
-	Type     NoiseType
+	Volume    float64
+	CutoffHz  float64
+	Type      NoiseType
+	Frequency float64
 }
 
 type Engine struct {
 	volume    atomic.Uint64
 	cutoff    atomic.Uint64
 	noiseType atomic.Int32
+	frequency atomic.Uint64
 
-	lpPrev    float64
-	brownPrev float64
+	playTarget atomic.Uint64
+	fadeCoef   atomic.Uint64
+
+	currentGain float64
+	lpPrev      float64
+	brownPrev   float64
 
 	b0, b1, b2, b3, b4, b5, b6 float64
 
@@ -41,10 +47,13 @@ type Engine struct {
 func New() *Engine {
 	e := &Engine{}
 	e.SetParams(Params{
-		Volume:   0.02,
-		CutoffHz: 8000,
-		Type:     NoiseWhite,
+		Volume:    0.02,
+		CutoffHz:  8000,
+		Type:      NoiseWhite,
+		Frequency: 2000,
 	})
+	e.playTarget.Store(math.Float64bits(0))
+	e.fadeCoef.Store(math.Float64bits(1.0))
 	return e
 }
 
@@ -52,6 +61,40 @@ func (e *Engine) SetParams(p Params) {
 	e.volume.Store(math.Float64bits(clamp(p.Volume, 0, 1)))
 	e.cutoff.Store(math.Float64bits(clamp(p.CutoffHz, 20, 20000)))
 	e.noiseType.Store(int32(p.Type))
+	e.frequency.Store(math.Float64bits(clamp(p.Frequency, 0, 20000)))
+}
+
+func (e *Engine) GetParams() Params {
+	return Params{
+		Volume:    math.Float64frombits(e.volume.Load()),
+		CutoffHz:  math.Float64frombits(e.cutoff.Load()),
+		Type:      NoiseType(e.noiseType.Load()),
+		Frequency: math.Float64frombits(e.frequency.Load()),
+	}
+}
+
+func (e *Engine) Play(fadeMs int) {
+	e.setEnvelope(1.0, fadeMs)
+}
+
+func (e *Engine) Pause(fadeMs int) {
+	e.setEnvelope(0.0, fadeMs)
+}
+
+func (e *Engine) IsPlaying() bool {
+	return math.Float64frombits(e.playTarget.Load()) > 0.5
+}
+
+func (e *Engine) setEnvelope(target float64, fadeMs int) {
+	var coef float64
+	if fadeMs <= 0 {
+		coef = 1.0
+	} else {
+		tauSamples := float64(fadeMs) * SampleRate / 1000.0 / 4.6
+		coef = 1 - math.Exp(-1/tauSamples)
+	}
+	e.fadeCoef.Store(math.Float64bits(coef))
+	e.playTarget.Store(math.Float64bits(target))
 }
 
 func (e *Engine) Start() error {
@@ -98,16 +141,21 @@ func (e *Engine) audioCallback(out, _ []byte, frames uint32) {
 	vol := math.Float64frombits(e.volume.Load())
 	cutoff := math.Float64frombits(e.cutoff.Load())
 	nt := NoiseType(e.noiseType.Load())
+	target := math.Float64frombits(e.playTarget.Load())
+	fadeCoef := math.Float64frombits(e.fadeCoef.Load())
 
 	// Lowpass coefficient
 	a := 1 - math.Exp(-2*math.Pi*cutoff/SampleRate)
+
 	for i := range frames {
-		s := e.generateSample(nt, a, vol)
-		writeFloat32LE(out[i*4:], float32(s))
+		e.currentGain += fadeCoef * (target - e.currentGain)
+		s := e.generateSample(nt, a)
+		out_sample := s * vol * e.currentGain
+		writeFloat32LE(out[i*4:], float32(out_sample))
 	}
 }
 
-func (e *Engine) generateSample(nt NoiseType, lpCoef, vol float64) float64 {
+func (e *Engine) generateSample(nt NoiseType, lpCoef float64) float64 {
 	white := rand.Float64()*2 - 1
 
 	var n float64
@@ -129,7 +177,7 @@ func (e *Engine) generateSample(nt NoiseType, lpCoef, vol float64) float64 {
 	}
 	e.lpPrev += lpCoef * (n - e.lpPrev)
 
-	return e.lpPrev * vol
+	return e.lpPrev
 }
 
 func writeFloat32LE(buf []byte, f float32) {

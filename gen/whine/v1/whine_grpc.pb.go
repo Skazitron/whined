@@ -22,6 +22,9 @@ const (
 	WhineControl_SetParams_FullMethodName    = "/whine.v1.WhineControl/SetParams"
 	WhineControl_StreamParams_FullMethodName = "/whine.v1.WhineControl/StreamParams"
 	WhineControl_GetParams_FullMethodName    = "/whine.v1.WhineControl/GetParams"
+	WhineControl_Play_FullMethodName         = "/whine.v1.WhineControl/Play"
+	WhineControl_Pause_FullMethodName        = "/whine.v1.WhineControl/Pause"
+	WhineControl_GetStatus_FullMethodName    = "/whine.v1.WhineControl/GetStatus"
 )
 
 // WhineControlClient is the client API for WhineControl service.
@@ -31,6 +34,9 @@ type WhineControlClient interface {
 	SetParams(ctx context.Context, in *Params, opts ...grpc.CallOption) (*Ack, error)
 	StreamParams(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[Params, Ack], error)
 	GetParams(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Params, error)
+	Play(ctx context.Context, in *PlayRequest, opts ...grpc.CallOption) (*Ack, error)
+	Pause(ctx context.Context, in *PauseRequest, opts ...grpc.CallOption) (*Ack, error)
+	GetStatus(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Status, error)
 }
 
 type whineControlClient struct {
@@ -74,6 +80,36 @@ func (c *whineControlClient) GetParams(ctx context.Context, in *Empty, opts ...g
 	return out, nil
 }
 
+func (c *whineControlClient) Play(ctx context.Context, in *PlayRequest, opts ...grpc.CallOption) (*Ack, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Ack)
+	err := c.cc.Invoke(ctx, WhineControl_Play_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *whineControlClient) Pause(ctx context.Context, in *PauseRequest, opts ...grpc.CallOption) (*Ack, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Ack)
+	err := c.cc.Invoke(ctx, WhineControl_Pause_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *whineControlClient) GetStatus(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Status, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Status)
+	err := c.cc.Invoke(ctx, WhineControl_GetStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WhineControlServer is the server API for WhineControl service.
 // All implementations must embed UnimplementedWhineControlServer
 // for forward compatibility.
@@ -81,6 +117,9 @@ type WhineControlServer interface {
 	SetParams(context.Context, *Params) (*Ack, error)
 	StreamParams(grpc.BidiStreamingServer[Params, Ack]) error
 	GetParams(context.Context, *Empty) (*Params, error)
+	Play(context.Context, *PlayRequest) (*Ack, error)
+	Pause(context.Context, *PauseRequest) (*Ack, error)
+	GetStatus(context.Context, *Empty) (*Status, error)
 	mustEmbedUnimplementedWhineControlServer()
 }
 
@@ -99,6 +138,15 @@ func (UnimplementedWhineControlServer) StreamParams(grpc.BidiStreamingServer[Par
 }
 func (UnimplementedWhineControlServer) GetParams(context.Context, *Empty) (*Params, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetParams not implemented")
+}
+func (UnimplementedWhineControlServer) Play(context.Context, *PlayRequest) (*Ack, error) {
+	return nil, status.Error(codes.Unimplemented, "method Play not implemented")
+}
+func (UnimplementedWhineControlServer) Pause(context.Context, *PauseRequest) (*Ack, error) {
+	return nil, status.Error(codes.Unimplemented, "method Pause not implemented")
+}
+func (UnimplementedWhineControlServer) GetStatus(context.Context, *Empty) (*Status, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetStatus not implemented")
 }
 func (UnimplementedWhineControlServer) mustEmbedUnimplementedWhineControlServer() {}
 func (UnimplementedWhineControlServer) testEmbeddedByValue()                      {}
@@ -164,6 +212,60 @@ func _WhineControl_GetParams_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WhineControl_Play_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PlayRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WhineControlServer).Play(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WhineControl_Play_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WhineControlServer).Play(ctx, req.(*PlayRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WhineControl_Pause_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PauseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WhineControlServer).Pause(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WhineControl_Pause_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WhineControlServer).Pause(ctx, req.(*PauseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WhineControl_GetStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WhineControlServer).GetStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WhineControl_GetStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WhineControlServer).GetStatus(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WhineControl_ServiceDesc is the grpc.ServiceDesc for WhineControl service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -178,6 +280,18 @@ var WhineControl_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetParams",
 			Handler:    _WhineControl_GetParams_Handler,
+		},
+		{
+			MethodName: "Play",
+			Handler:    _WhineControl_Play_Handler,
+		},
+		{
+			MethodName: "Pause",
+			Handler:    _WhineControl_Pause_Handler,
+		},
+		{
+			MethodName: "GetStatus",
+			Handler:    _WhineControl_GetStatus_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

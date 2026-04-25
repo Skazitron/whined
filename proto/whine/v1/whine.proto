@@ -8,6 +8,22 @@ service WhineControl {
   rpc SetParams(Params) returns (Ack);
   rpc StreamParams(stream Params) returns (stream Ack);
   rpc GetParams(Empty) returns (Params);
+  rpc Play(PlayRequest) returns (Ack);
+  rpc Pause(PauseRequest) returns (Ack);
+  rpc GetStatus(Empty) returns (Status);
+}
+
+message PlayRequest {
+  int32 fade_ms = 1;
+}
+
+message PauseRequest {
+  int32 fade_ms = 1;
+}
+
+message Status {
+  bool   playing = 1;
+  Params params = 2;
 }
 
 enum NoiseType {
@@ -30,6 +46,7 @@ message Params {
   float      resonance = 3;
   NoiseType  type      = 4;
   FilterMode filter    = 5;
+  float      frequency = 6;
 }
 
 message Ack {

@@ -125,6 +125,146 @@ func (FilterMode) EnumDescriptor() ([]byte, []int) {
 	return file_whine_v1_whine_proto_rawDescGZIP(), []int{1}
 }
 
+type PlayRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FadeMs        int32                  `protobuf:"varint,1,opt,name=fade_ms,json=fadeMs,proto3" json:"fade_ms,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PlayRequest) Reset() {
+	*x = PlayRequest{}
+	mi := &file_whine_v1_whine_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PlayRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PlayRequest) ProtoMessage() {}
+
+func (x *PlayRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_whine_v1_whine_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PlayRequest.ProtoReflect.Descriptor instead.
+func (*PlayRequest) Descriptor() ([]byte, []int) {
+	return file_whine_v1_whine_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *PlayRequest) GetFadeMs() int32 {
+	if x != nil {
+		return x.FadeMs
+	}
+	return 0
+}
+
+type PauseRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FadeMs        int32                  `protobuf:"varint,1,opt,name=fade_ms,json=fadeMs,proto3" json:"fade_ms,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PauseRequest) Reset() {
+	*x = PauseRequest{}
+	mi := &file_whine_v1_whine_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PauseRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PauseRequest) ProtoMessage() {}
+
+func (x *PauseRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_whine_v1_whine_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PauseRequest.ProtoReflect.Descriptor instead.
+func (*PauseRequest) Descriptor() ([]byte, []int) {
+	return file_whine_v1_whine_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *PauseRequest) GetFadeMs() int32 {
+	if x != nil {
+		return x.FadeMs
+	}
+	return 0
+}
+
+type Status struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Playing       bool                   `protobuf:"varint,1,opt,name=playing,proto3" json:"playing,omitempty"`
+	Params        *Params                `protobuf:"bytes,2,opt,name=params,proto3" json:"params,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Status) Reset() {
+	*x = Status{}
+	mi := &file_whine_v1_whine_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Status) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Status) ProtoMessage() {}
+
+func (x *Status) ProtoReflect() protoreflect.Message {
+	mi := &file_whine_v1_whine_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Status.ProtoReflect.Descriptor instead.
+func (*Status) Descriptor() ([]byte, []int) {
+	return file_whine_v1_whine_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Status) GetPlaying() bool {
+	if x != nil {
+		return x.Playing
+	}
+	return false
+}
+
+func (x *Status) GetParams() *Params {
+	if x != nil {
+		return x.Params
+	}
+	return nil
+}
+
 type Params struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Volume        float32                `protobuf:"fixed32,1,opt,name=volume,proto3" json:"volume,omitempty"`
@@ -132,13 +272,14 @@ type Params struct {
 	Resonance     float32                `protobuf:"fixed32,3,opt,name=resonance,proto3" json:"resonance,omitempty"`
 	Type          NoiseType              `protobuf:"varint,4,opt,name=type,proto3,enum=whine.v1.NoiseType" json:"type,omitempty"`
 	Filter        FilterMode             `protobuf:"varint,5,opt,name=filter,proto3,enum=whine.v1.FilterMode" json:"filter,omitempty"`
+	Frequency     float32                `protobuf:"fixed32,6,opt,name=frequency,proto3" json:"frequency,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Params) Reset() {
 	*x = Params{}
-	mi := &file_whine_v1_whine_proto_msgTypes[0]
+	mi := &file_whine_v1_whine_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -150,7 +291,7 @@ func (x *Params) String() string {
 func (*Params) ProtoMessage() {}
 
 func (x *Params) ProtoReflect() protoreflect.Message {
-	mi := &file_whine_v1_whine_proto_msgTypes[0]
+	mi := &file_whine_v1_whine_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -163,7 +304,7 @@ func (x *Params) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Params.ProtoReflect.Descriptor instead.
 func (*Params) Descriptor() ([]byte, []int) {
-	return file_whine_v1_whine_proto_rawDescGZIP(), []int{0}
+	return file_whine_v1_whine_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Params) GetVolume() float32 {
@@ -201,6 +342,13 @@ func (x *Params) GetFilter() FilterMode {
 	return FilterMode_FILTER_MODE_UNSPECIFIED
 }
 
+func (x *Params) GetFrequency() float32 {
+	if x != nil {
+		return x.Frequency
+	}
+	return 0
+}
+
 type Ack struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Ok            bool                   `protobuf:"varint,1,opt,name=ok,proto3" json:"ok,omitempty"`
@@ -211,7 +359,7 @@ type Ack struct {
 
 func (x *Ack) Reset() {
 	*x = Ack{}
-	mi := &file_whine_v1_whine_proto_msgTypes[1]
+	mi := &file_whine_v1_whine_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -223,7 +371,7 @@ func (x *Ack) String() string {
 func (*Ack) ProtoMessage() {}
 
 func (x *Ack) ProtoReflect() protoreflect.Message {
-	mi := &file_whine_v1_whine_proto_msgTypes[1]
+	mi := &file_whine_v1_whine_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -236,7 +384,7 @@ func (x *Ack) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Ack.ProtoReflect.Descriptor instead.
 func (*Ack) Descriptor() ([]byte, []int) {
-	return file_whine_v1_whine_proto_rawDescGZIP(), []int{1}
+	return file_whine_v1_whine_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Ack) GetOk() bool {
@@ -261,7 +409,7 @@ type Empty struct {
 
 func (x *Empty) Reset() {
 	*x = Empty{}
-	mi := &file_whine_v1_whine_proto_msgTypes[2]
+	mi := &file_whine_v1_whine_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -273,7 +421,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_whine_v1_whine_proto_msgTypes[2]
+	mi := &file_whine_v1_whine_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -286,20 +434,28 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_whine_v1_whine_proto_rawDescGZIP(), []int{2}
+	return file_whine_v1_whine_proto_rawDescGZIP(), []int{5}
 }
 
 var File_whine_v1_whine_proto protoreflect.FileDescriptor
 
 const file_whine_v1_whine_proto_rawDesc = "" +
 	"\n" +
-	"\x14whine/v1/whine.proto\x12\bwhine.v1\"\xb2\x01\n" +
+	"\x14whine/v1/whine.proto\x12\bwhine.v1\"&\n" +
+	"\vPlayRequest\x12\x17\n" +
+	"\afade_ms\x18\x01 \x01(\x05R\x06fadeMs\"'\n" +
+	"\fPauseRequest\x12\x17\n" +
+	"\afade_ms\x18\x01 \x01(\x05R\x06fadeMs\"L\n" +
+	"\x06Status\x12\x18\n" +
+	"\aplaying\x18\x01 \x01(\bR\aplaying\x12(\n" +
+	"\x06params\x18\x02 \x01(\v2\x10.whine.v1.ParamsR\x06params\"\xd0\x01\n" +
 	"\x06Params\x12\x16\n" +
 	"\x06volume\x18\x01 \x01(\x02R\x06volume\x12\x1b\n" +
 	"\tcutoff_hz\x18\x02 \x01(\x02R\bcutoffHz\x12\x1c\n" +
 	"\tresonance\x18\x03 \x01(\x02R\tresonance\x12'\n" +
 	"\x04type\x18\x04 \x01(\x0e2\x13.whine.v1.NoiseTypeR\x04type\x12,\n" +
-	"\x06filter\x18\x05 \x01(\x0e2\x14.whine.v1.FilterModeR\x06filter\"/\n" +
+	"\x06filter\x18\x05 \x01(\x0e2\x14.whine.v1.FilterModeR\x06filter\x12\x1c\n" +
+	"\tfrequency\x18\x06 \x01(\x02R\tfrequency\"/\n" +
 	"\x03Ack\x12\x0e\n" +
 	"\x02ok\x18\x01 \x01(\bR\x02ok\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"\a\n" +
@@ -314,11 +470,14 @@ const file_whine_v1_whine_proto_rawDesc = "" +
 	"\x17FILTER_MODE_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13FILTER_MODE_LOWPASS\x10\x01\x12\x18\n" +
 	"\x14FILTER_MODE_HIGHPASS\x10\x02\x12\x18\n" +
-	"\x14FILTER_MODE_BANDPASS\x10\x032\xa1\x01\n" +
+	"\x14FILTER_MODE_BANDPASS\x10\x032\xaf\x02\n" +
 	"\fWhineControl\x12,\n" +
 	"\tSetParams\x12\x10.whine.v1.Params\x1a\r.whine.v1.Ack\x123\n" +
 	"\fStreamParams\x12\x10.whine.v1.Params\x1a\r.whine.v1.Ack(\x010\x01\x12.\n" +
-	"\tGetParams\x12\x0f.whine.v1.Empty\x1a\x10.whine.v1.ParamsB1Z/github.com/Skazitron/whine/gen/whine/v1;whinev1b\x06proto3"
+	"\tGetParams\x12\x0f.whine.v1.Empty\x1a\x10.whine.v1.Params\x12,\n" +
+	"\x04Play\x12\x15.whine.v1.PlayRequest\x1a\r.whine.v1.Ack\x12.\n" +
+	"\x05Pause\x12\x16.whine.v1.PauseRequest\x1a\r.whine.v1.Ack\x12.\n" +
+	"\tGetStatus\x12\x0f.whine.v1.Empty\x1a\x10.whine.v1.StatusB1Z/github.com/Skazitron/whine/gen/whine/v1;whinev1b\x06proto3"
 
 var (
 	file_whine_v1_whine_proto_rawDescOnce sync.Once
@@ -333,28 +492,38 @@ func file_whine_v1_whine_proto_rawDescGZIP() []byte {
 }
 
 var file_whine_v1_whine_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_whine_v1_whine_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_whine_v1_whine_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_whine_v1_whine_proto_goTypes = []any{
-	(NoiseType)(0),  // 0: whine.v1.NoiseType
-	(FilterMode)(0), // 1: whine.v1.FilterMode
-	(*Params)(nil),  // 2: whine.v1.Params
-	(*Ack)(nil),     // 3: whine.v1.Ack
-	(*Empty)(nil),   // 4: whine.v1.Empty
+	(NoiseType)(0),       // 0: whine.v1.NoiseType
+	(FilterMode)(0),      // 1: whine.v1.FilterMode
+	(*PlayRequest)(nil),  // 2: whine.v1.PlayRequest
+	(*PauseRequest)(nil), // 3: whine.v1.PauseRequest
+	(*Status)(nil),       // 4: whine.v1.Status
+	(*Params)(nil),       // 5: whine.v1.Params
+	(*Ack)(nil),          // 6: whine.v1.Ack
+	(*Empty)(nil),        // 7: whine.v1.Empty
 }
 var file_whine_v1_whine_proto_depIdxs = []int32{
-	0, // 0: whine.v1.Params.type:type_name -> whine.v1.NoiseType
-	1, // 1: whine.v1.Params.filter:type_name -> whine.v1.FilterMode
-	2, // 2: whine.v1.WhineControl.SetParams:input_type -> whine.v1.Params
-	2, // 3: whine.v1.WhineControl.StreamParams:input_type -> whine.v1.Params
-	4, // 4: whine.v1.WhineControl.GetParams:input_type -> whine.v1.Empty
-	3, // 5: whine.v1.WhineControl.SetParams:output_type -> whine.v1.Ack
-	3, // 6: whine.v1.WhineControl.StreamParams:output_type -> whine.v1.Ack
-	2, // 7: whine.v1.WhineControl.GetParams:output_type -> whine.v1.Params
-	5, // [5:8] is the sub-list for method output_type
-	2, // [2:5] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	5, // 0: whine.v1.Status.params:type_name -> whine.v1.Params
+	0, // 1: whine.v1.Params.type:type_name -> whine.v1.NoiseType
+	1, // 2: whine.v1.Params.filter:type_name -> whine.v1.FilterMode
+	5, // 3: whine.v1.WhineControl.SetParams:input_type -> whine.v1.Params
+	5, // 4: whine.v1.WhineControl.StreamParams:input_type -> whine.v1.Params
+	7, // 5: whine.v1.WhineControl.GetParams:input_type -> whine.v1.Empty
+	2, // 6: whine.v1.WhineControl.Play:input_type -> whine.v1.PlayRequest
+	3, // 7: whine.v1.WhineControl.Pause:input_type -> whine.v1.PauseRequest
+	7, // 8: whine.v1.WhineControl.GetStatus:input_type -> whine.v1.Empty
+	6, // 9: whine.v1.WhineControl.SetParams:output_type -> whine.v1.Ack
+	6, // 10: whine.v1.WhineControl.StreamParams:output_type -> whine.v1.Ack
+	5, // 11: whine.v1.WhineControl.GetParams:output_type -> whine.v1.Params
+	6, // 12: whine.v1.WhineControl.Play:output_type -> whine.v1.Ack
+	6, // 13: whine.v1.WhineControl.Pause:output_type -> whine.v1.Ack
+	4, // 14: whine.v1.WhineControl.GetStatus:output_type -> whine.v1.Status
+	9, // [9:15] is the sub-list for method output_type
+	3, // [3:9] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_whine_v1_whine_proto_init() }
@@ -368,7 +537,7 @@ func file_whine_v1_whine_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_whine_v1_whine_proto_rawDesc), len(file_whine_v1_whine_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   3,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
