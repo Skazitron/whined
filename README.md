@@ -1,4 +1,4 @@
-## Whine - A noice cancellation engine
+## Whine - A white noise generation engine
 
 > **This is a WIP**
 
