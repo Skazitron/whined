@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package whine.v1;
+
+option go_package = "github.com/Skazitron/whine/gen/whine/v1;whinev1";
+
+service WhineControl {
+  rpc SetParams(Params) returns (Ack);
+  rpc StreamParams(stream Params) returns (stream Ack);
+  rpc GetParams(Empty) returns (Params);
+}
+
+enum NoiseType {
+  NOISE_TYPE_UNSPECIFIED = 0;
+  NOISE_TYPE_WHITE       = 1;
+  NOISE_TYPE_PINK        = 2;
+  NOISE_TYPE_BROWN       = 3;
+}
+
+enum FilterMode {
+  FILTER_MODE_UNSPECIFIED = 0;
+  FILTER_MODE_LOWPASS     = 1;
+  FILTER_MODE_HIGHPASS    = 2;
+  FILTER_MODE_BANDPASS    = 3;
+}
+
+message Params {
+  float      volume    = 1;
+  float      cutoff_hz = 2;
+  float      resonance = 3;
+  NoiseType  type      = 4;
+  FilterMode filter    = 5;
+}
+
+message Ack {
+  bool   ok      = 1;
+  string message = 2;
+}
+
+message Empty {}
