@@ -32,7 +32,7 @@ message FadeRequest {
 
 message Status {
   bool playing = 1;
-  string message =2;
+  Mix  mix = 2;
 }
 
 enum NoiseType {

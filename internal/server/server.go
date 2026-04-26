@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+
 	whinev1 "whine/gen/whine/v1"
 	"whine/internal/engine"
 )
@@ -17,65 +18,100 @@ func New(e *engine.Engine) *Server {
 	return &Server{eng: e}
 }
 
-func (s *Server) SetParams(_ context.Context, p *whinev1.Params) (*whinev1.Ack, error) {
-	s.eng.SetParams(toEngineParams(p))
+func (s *Server) applyMix(m *whinev1.Mix) error {
+	if m == nil {
+		return errors.New("mix is nil")
+	}
+	s.eng.SetMasterVolume(float64(m.MasterVolume))
+
+	incoming := make(map[int]engine.VoiceParams, len(m.Voices))
+	for _, v := range m.Voices {
+		incoming[int(v.VoiceId)] = engine.VoiceParams{
+			Enabled:   v.Enabled,
+			Volume:    float64(v.Volume),
+			CutoffHz:  float64(v.CutoffHz),
+			Type:      toEngineNoiseType(v.Type),
+			Frequency: float64(v.Frequency),
+		}
+	}
+
+	for i := 0; i < engine.MaxVoices; i++ {
+		if vp, ok := incoming[i]; ok {
+			if err := s.eng.SetVoice(i, vp); err != nil {
+				return err
+			}
+		} else {
+			if err := s.eng.SetVoice(i, engine.VoiceParams{Enabled: false}); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (s *Server) SetMix(_ context.Context, m *whinev1.Mix) (*whinev1.Ack, error) {
+	if err := s.applyMix(m); err != nil {
+		return &whinev1.Ack{Ok: false, Message: err.Error()}, nil
+	}
 	return &whinev1.Ack{Ok: true}, nil
 }
 
-func (s *Server) GetParams(_ context.Context, _ *whinev1.Empty) (*whinev1.Params, error) {
-	return toProtoParams(s.eng.GetParams()), nil
-}
-
-func (s *Server) StreamParams(stream whinev1.WhineControl_StreamParamsServer) error {
+func (s *Server) StreamMix(stream whinev1.WhineControl_StreamMixServer) error {
 	for {
-		p, err := stream.Recv()
+		m, err := stream.Recv()
 		if errors.Is(err, io.EOF) {
 			return nil
 		}
 		if err != nil {
 			return err
 		}
-		s.eng.SetParams(toEngineParams(p))
+		if err := s.applyMix(m); err != nil {
+			if sendErr := stream.Send(&whinev1.Ack{Ok: false, Message: err.Error()}); sendErr != nil {
+				return sendErr
+			}
+			continue
+		}
 		if err := stream.Send(&whinev1.Ack{Ok: true}); err != nil {
 			return err
 		}
 	}
 }
 
-func (s *Server) Play(_ context.Context, req *whinev1.PlayRequest) (*whinev1.Ack, error) {
+func (s *Server) GetStatus(_ context.Context, _ *whinev1.Empty) (*whinev1.Status, error) {
+	all := s.eng.AllVoices()
+	voices := make([]*whinev1.VoiceParams, 0, len(all))
+	for i, v := range all {
+		voices = append(voices, voiceToProto(i, v))
+	}
+	return &whinev1.Status{
+		Playing: s.eng.IsPlaying(),
+		Mix: &whinev1.Mix{
+			MasterVolume: float32(s.eng.GetMasterVolume()),
+			Voices:       voices,
+		},
+	}, nil
+}
+
+func (s *Server) Play(_ context.Context, req *whinev1.FadeRequest) (*whinev1.Ack, error) {
 	s.eng.Play(int(req.FadeMs))
 	return &whinev1.Ack{Ok: true}, nil
 }
 
-func (s *Server) Pause(_ context.Context, req *whinev1.PauseRequest) (*whinev1.Ack, error) {
+func (s *Server) Pause(_ context.Context, req *whinev1.FadeRequest) (*whinev1.Ack, error) {
 	s.eng.Pause(int(req.FadeMs))
 	return &whinev1.Ack{Ok: true}, nil
 }
 
-func (s *Server) GetStatus(_ context.Context, _ *whinev1.Empty) (*whinev1.Status, error) {
-	return &whinev1.Status{
-		Playing: s.eng.IsPlaying(),
-		Params:  toProtoParams(s.eng.GetParams()),
-	}, nil
-}
+// --- Translation helpers ---
 
-func toEngineParams(p *whinev1.Params) engine.Params {
-	return engine.Params{
-		Volume:   float64(p.Volume),
-		CutoffHz: float64(p.CutoffHz),
-		Type:     toEngineNoiseType(p.Type),
-		// TODO: update this when building the frequency modulator
-		Frequency: float64(20000),
-	}
-}
-
-func toProtoParams(p engine.Params) *whinev1.Params {
-	return &whinev1.Params{
-		Volume:   float32(p.Volume),
-		CutoffHz: float32(p.CutoffHz),
-		Type:     toProtoNoiseType(p.Type),
-		// TODO: update this when building the frequency modulator
-		Frequency: float32(20000),
+func voiceToProto(id int, v engine.VoiceParams) *whinev1.VoiceParams {
+	return &whinev1.VoiceParams{
+		VoiceId:   int32(id),
+		Enabled:   v.Enabled,
+		Volume:    float32(v.Volume),
+		CutoffHz:  float32(v.CutoffHz),
+		Type:      toProtoNoiseType(v.Type),
+		Frequency: float32(v.Frequency),
 	}
 }
 

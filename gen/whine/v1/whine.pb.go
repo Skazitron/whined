@@ -256,7 +256,7 @@ func (x *FadeRequest) GetFadeMs() int32 {
 type Status struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Playing       bool                   `protobuf:"varint,1,opt,name=playing,proto3" json:"playing,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Mix           *Mix                   `protobuf:"bytes,2,opt,name=mix,proto3" json:"mix,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -298,11 +298,11 @@ func (x *Status) GetPlaying() bool {
 	return false
 }
 
-func (x *Status) GetMessage() string {
+func (x *Status) GetMix() *Mix {
 	if x != nil {
-		return x.Message
+		return x.Mix
 	}
-	return ""
+	return nil
 }
 
 type Ack struct {
@@ -409,10 +409,10 @@ const file_whine_v1_whine_proto_rawDesc = "" +
 	"\x04type\x18\x05 \x01(\x0e2\x13.whine.v1.NoiseTypeR\x04type\x12\x1c\n" +
 	"\tfrequency\x18\x06 \x01(\x02R\tfrequency\"&\n" +
 	"\vFadeRequest\x12\x17\n" +
-	"\afade_ms\x18\x01 \x01(\x05R\x06fadeMs\"<\n" +
+	"\afade_ms\x18\x01 \x01(\x05R\x06fadeMs\"C\n" +
 	"\x06Status\x12\x18\n" +
-	"\aplaying\x18\x01 \x01(\bR\aplaying\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"/\n" +
+	"\aplaying\x18\x01 \x01(\bR\aplaying\x12\x1f\n" +
+	"\x03mix\x18\x02 \x01(\v2\r.whine.v1.MixR\x03mix\"/\n" +
 	"\x03Ack\x12\x0e\n" +
 	"\x02ok\x18\x01 \x01(\bR\x02ok\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"\a\n" +
@@ -455,21 +455,22 @@ var file_whine_v1_whine_proto_goTypes = []any{
 var file_whine_v1_whine_proto_depIdxs = []int32{
 	2, // 0: whine.v1.Mix.voices:type_name -> whine.v1.VoiceParams
 	0, // 1: whine.v1.VoiceParams.type:type_name -> whine.v1.NoiseType
-	1, // 2: whine.v1.WhineControl.SetMix:input_type -> whine.v1.Mix
-	1, // 3: whine.v1.WhineControl.StreamMix:input_type -> whine.v1.Mix
-	3, // 4: whine.v1.WhineControl.Play:input_type -> whine.v1.FadeRequest
-	3, // 5: whine.v1.WhineControl.Pause:input_type -> whine.v1.FadeRequest
-	6, // 6: whine.v1.WhineControl.GetStatus:input_type -> whine.v1.Empty
-	5, // 7: whine.v1.WhineControl.SetMix:output_type -> whine.v1.Ack
-	5, // 8: whine.v1.WhineControl.StreamMix:output_type -> whine.v1.Ack
-	5, // 9: whine.v1.WhineControl.Play:output_type -> whine.v1.Ack
-	5, // 10: whine.v1.WhineControl.Pause:output_type -> whine.v1.Ack
-	4, // 11: whine.v1.WhineControl.GetStatus:output_type -> whine.v1.Status
-	7, // [7:12] is the sub-list for method output_type
-	2, // [2:7] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	1, // 2: whine.v1.Status.mix:type_name -> whine.v1.Mix
+	1, // 3: whine.v1.WhineControl.SetMix:input_type -> whine.v1.Mix
+	1, // 4: whine.v1.WhineControl.StreamMix:input_type -> whine.v1.Mix
+	3, // 5: whine.v1.WhineControl.Play:input_type -> whine.v1.FadeRequest
+	3, // 6: whine.v1.WhineControl.Pause:input_type -> whine.v1.FadeRequest
+	6, // 7: whine.v1.WhineControl.GetStatus:input_type -> whine.v1.Empty
+	5, // 8: whine.v1.WhineControl.SetMix:output_type -> whine.v1.Ack
+	5, // 9: whine.v1.WhineControl.StreamMix:output_type -> whine.v1.Ack
+	5, // 10: whine.v1.WhineControl.Play:output_type -> whine.v1.Ack
+	5, // 11: whine.v1.WhineControl.Pause:output_type -> whine.v1.Ack
+	4, // 12: whine.v1.WhineControl.GetStatus:output_type -> whine.v1.Status
+	8, // [8:13] is the sub-list for method output_type
+	3, // [3:8] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_whine_v1_whine_proto_init() }
