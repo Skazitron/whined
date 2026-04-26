@@ -1,4 +1,4 @@
-module whine
+module github.com/Skazitron/whined
 
 go 1.26.2
 

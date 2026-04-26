@@ -14,9 +14,9 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	// TODO: Update this before sharing
-	whinev1 "whine/gen/whine/v1"
-	"whine/internal/engine"
-	"whine/internal/server"
+	whinev1 "github.com/Skazitron/whined/gen/whine/v1"
+	"github.com/Skazitron/whined/internal/engine"
+	"github.com/Skazitron/whined/internal/server"
 )
 
 func main() {

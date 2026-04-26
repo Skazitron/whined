@@ -5,8 +5,8 @@ import (
 	"errors"
 	"io"
 
-	whinev1 "whine/gen/whine/v1"
-	"whine/internal/engine"
+	whinev1 "github.com/Skazitron/whined/gen/whine/v1"
+	"github.com/Skazitron/whined/internal/engine"
 )
 
 type Server struct {
