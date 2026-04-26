@@ -19,23 +19,21 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	WhineControl_SetParams_FullMethodName    = "/whine.v1.WhineControl/SetParams"
-	WhineControl_StreamParams_FullMethodName = "/whine.v1.WhineControl/StreamParams"
-	WhineControl_GetParams_FullMethodName    = "/whine.v1.WhineControl/GetParams"
-	WhineControl_Play_FullMethodName         = "/whine.v1.WhineControl/Play"
-	WhineControl_Pause_FullMethodName        = "/whine.v1.WhineControl/Pause"
-	WhineControl_GetStatus_FullMethodName    = "/whine.v1.WhineControl/GetStatus"
+	WhineControl_SetMix_FullMethodName    = "/whine.v1.WhineControl/SetMix"
+	WhineControl_StreamMix_FullMethodName = "/whine.v1.WhineControl/StreamMix"
+	WhineControl_Play_FullMethodName      = "/whine.v1.WhineControl/Play"
+	WhineControl_Pause_FullMethodName     = "/whine.v1.WhineControl/Pause"
+	WhineControl_GetStatus_FullMethodName = "/whine.v1.WhineControl/GetStatus"
 )
 
 // WhineControlClient is the client API for WhineControl service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WhineControlClient interface {
-	SetParams(ctx context.Context, in *Params, opts ...grpc.CallOption) (*Ack, error)
-	StreamParams(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[Params, Ack], error)
-	GetParams(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Params, error)
-	Play(ctx context.Context, in *PlayRequest, opts ...grpc.CallOption) (*Ack, error)
-	Pause(ctx context.Context, in *PauseRequest, opts ...grpc.CallOption) (*Ack, error)
+	SetMix(ctx context.Context, in *Mix, opts ...grpc.CallOption) (*Ack, error)
+	StreamMix(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[Mix, Ack], error)
+	Play(ctx context.Context, in *FadeRequest, opts ...grpc.CallOption) (*Ack, error)
+	Pause(ctx context.Context, in *FadeRequest, opts ...grpc.CallOption) (*Ack, error)
 	GetStatus(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Status, error)
 }
 
@@ -47,40 +45,30 @@ func NewWhineControlClient(cc grpc.ClientConnInterface) WhineControlClient {
 	return &whineControlClient{cc}
 }
 
-func (c *whineControlClient) SetParams(ctx context.Context, in *Params, opts ...grpc.CallOption) (*Ack, error) {
+func (c *whineControlClient) SetMix(ctx context.Context, in *Mix, opts ...grpc.CallOption) (*Ack, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Ack)
-	err := c.cc.Invoke(ctx, WhineControl_SetParams_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, WhineControl_SetMix_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *whineControlClient) StreamParams(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[Params, Ack], error) {
+func (c *whineControlClient) StreamMix(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[Mix, Ack], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &WhineControl_ServiceDesc.Streams[0], WhineControl_StreamParams_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &WhineControl_ServiceDesc.Streams[0], WhineControl_StreamMix_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[Params, Ack]{ClientStream: stream}
+	x := &grpc.GenericClientStream[Mix, Ack]{ClientStream: stream}
 	return x, nil
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type WhineControl_StreamParamsClient = grpc.BidiStreamingClient[Params, Ack]
+type WhineControl_StreamMixClient = grpc.BidiStreamingClient[Mix, Ack]
 
-func (c *whineControlClient) GetParams(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Params, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Params)
-	err := c.cc.Invoke(ctx, WhineControl_GetParams_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *whineControlClient) Play(ctx context.Context, in *PlayRequest, opts ...grpc.CallOption) (*Ack, error) {
+func (c *whineControlClient) Play(ctx context.Context, in *FadeRequest, opts ...grpc.CallOption) (*Ack, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Ack)
 	err := c.cc.Invoke(ctx, WhineControl_Play_FullMethodName, in, out, cOpts...)
@@ -90,7 +78,7 @@ func (c *whineControlClient) Play(ctx context.Context, in *PlayRequest, opts ...
 	return out, nil
 }
 
-func (c *whineControlClient) Pause(ctx context.Context, in *PauseRequest, opts ...grpc.CallOption) (*Ack, error) {
+func (c *whineControlClient) Pause(ctx context.Context, in *FadeRequest, opts ...grpc.CallOption) (*Ack, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Ack)
 	err := c.cc.Invoke(ctx, WhineControl_Pause_FullMethodName, in, out, cOpts...)
@@ -114,11 +102,10 @@ func (c *whineControlClient) GetStatus(ctx context.Context, in *Empty, opts ...g
 // All implementations must embed UnimplementedWhineControlServer
 // for forward compatibility.
 type WhineControlServer interface {
-	SetParams(context.Context, *Params) (*Ack, error)
-	StreamParams(grpc.BidiStreamingServer[Params, Ack]) error
-	GetParams(context.Context, *Empty) (*Params, error)
-	Play(context.Context, *PlayRequest) (*Ack, error)
-	Pause(context.Context, *PauseRequest) (*Ack, error)
+	SetMix(context.Context, *Mix) (*Ack, error)
+	StreamMix(grpc.BidiStreamingServer[Mix, Ack]) error
+	Play(context.Context, *FadeRequest) (*Ack, error)
+	Pause(context.Context, *FadeRequest) (*Ack, error)
 	GetStatus(context.Context, *Empty) (*Status, error)
 	mustEmbedUnimplementedWhineControlServer()
 }
@@ -130,19 +117,16 @@ type WhineControlServer interface {
 // pointer dereference when methods are called.
 type UnimplementedWhineControlServer struct{}
 
-func (UnimplementedWhineControlServer) SetParams(context.Context, *Params) (*Ack, error) {
-	return nil, status.Error(codes.Unimplemented, "method SetParams not implemented")
+func (UnimplementedWhineControlServer) SetMix(context.Context, *Mix) (*Ack, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetMix not implemented")
 }
-func (UnimplementedWhineControlServer) StreamParams(grpc.BidiStreamingServer[Params, Ack]) error {
-	return status.Error(codes.Unimplemented, "method StreamParams not implemented")
+func (UnimplementedWhineControlServer) StreamMix(grpc.BidiStreamingServer[Mix, Ack]) error {
+	return status.Error(codes.Unimplemented, "method StreamMix not implemented")
 }
-func (UnimplementedWhineControlServer) GetParams(context.Context, *Empty) (*Params, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetParams not implemented")
-}
-func (UnimplementedWhineControlServer) Play(context.Context, *PlayRequest) (*Ack, error) {
+func (UnimplementedWhineControlServer) Play(context.Context, *FadeRequest) (*Ack, error) {
 	return nil, status.Error(codes.Unimplemented, "method Play not implemented")
 }
-func (UnimplementedWhineControlServer) Pause(context.Context, *PauseRequest) (*Ack, error) {
+func (UnimplementedWhineControlServer) Pause(context.Context, *FadeRequest) (*Ack, error) {
 	return nil, status.Error(codes.Unimplemented, "method Pause not implemented")
 }
 func (UnimplementedWhineControlServer) GetStatus(context.Context, *Empty) (*Status, error) {
@@ -169,51 +153,33 @@ func RegisterWhineControlServer(s grpc.ServiceRegistrar, srv WhineControlServer)
 	s.RegisterService(&WhineControl_ServiceDesc, srv)
 }
 
-func _WhineControl_SetParams_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Params)
+func _WhineControl_SetMix_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Mix)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(WhineControlServer).SetParams(ctx, in)
+		return srv.(WhineControlServer).SetMix(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: WhineControl_SetParams_FullMethodName,
+		FullMethod: WhineControl_SetMix_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WhineControlServer).SetParams(ctx, req.(*Params))
+		return srv.(WhineControlServer).SetMix(ctx, req.(*Mix))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _WhineControl_StreamParams_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(WhineControlServer).StreamParams(&grpc.GenericServerStream[Params, Ack]{ServerStream: stream})
+func _WhineControl_StreamMix_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(WhineControlServer).StreamMix(&grpc.GenericServerStream[Mix, Ack]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type WhineControl_StreamParamsServer = grpc.BidiStreamingServer[Params, Ack]
-
-func _WhineControl_GetParams_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(WhineControlServer).GetParams(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: WhineControl_GetParams_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WhineControlServer).GetParams(ctx, req.(*Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
+type WhineControl_StreamMixServer = grpc.BidiStreamingServer[Mix, Ack]
 
 func _WhineControl_Play_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PlayRequest)
+	in := new(FadeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -225,13 +191,13 @@ func _WhineControl_Play_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: WhineControl_Play_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WhineControlServer).Play(ctx, req.(*PlayRequest))
+		return srv.(WhineControlServer).Play(ctx, req.(*FadeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _WhineControl_Pause_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PauseRequest)
+	in := new(FadeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -243,7 +209,7 @@ func _WhineControl_Pause_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: WhineControl_Pause_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WhineControlServer).Pause(ctx, req.(*PauseRequest))
+		return srv.(WhineControlServer).Pause(ctx, req.(*FadeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -274,12 +240,8 @@ var WhineControl_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*WhineControlServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SetParams",
-			Handler:    _WhineControl_SetParams_Handler,
-		},
-		{
-			MethodName: "GetParams",
-			Handler:    _WhineControl_GetParams_Handler,
+			MethodName: "SetMix",
+			Handler:    _WhineControl_SetMix_Handler,
 		},
 		{
 			MethodName: "Play",
@@ -296,8 +258,8 @@ var WhineControl_ServiceDesc = grpc.ServiceDesc{
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "StreamParams",
-			Handler:       _WhineControl_StreamParams_Handler,
+			StreamName:    "StreamMix",
+			Handler:       _WhineControl_StreamMix_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
