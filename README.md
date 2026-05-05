@@ -7,8 +7,9 @@ and pink noise. You are able to use up to 8 different noises with different cut-
 frequencies and volumes.
 
 ## Installation
-- Use the install script
-- Use the binary: the binaries are available to install for `x86` and `arm` based Linux, Windows, and MacOS.
+- clone the repo
+- have the prequisites and have go in your path
+- build the app using `go build ./cmd/whined/ .`
 
 ## Building from source
 
