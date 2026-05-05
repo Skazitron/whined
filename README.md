@@ -9,7 +9,7 @@ frequencies and volumes.
 ## Installation
 - clone the repo
 - have the prequisites and have go in your path
-- build the app using `go build ./cmd/whined/ .`
+- build the app using `go build ./cmd/whined/`
 
 ## Building from source
 
